@@ -9,20 +9,69 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
+  <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>seed-element Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../neon-animation/neon-animated-pages.html">
+    <link rel="import" href="../../neon-animation/neon-animations.html">
+    
+    <link rel="import" href="../../bt-cal-detail/bt-cal-detail.html">
+    <link rel="import" href="../../bt-cal-grid/bt-cal-grid.html">
+    <link rel="import" href="../../bt-cal-date/bt-cal-date.html">
     <link rel="import" href="../bt-cal-localData.html">
+
+
+    <style is="custom-style">
+      body {
+        font-family: 'roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        overflow: hidden;
+      }
+      neon-animated-pages {
+        height: 100%;
+      }
+      bt-cal-grid{
+        position: relative;
+      }
+    </style>
   </head>
   <body>
+      <p>An example of <code>&lt;bt-cal-detail&gt;</code>:</p>
+      
 
-    <p>An example of <code>&lt;bt-cal-localData&gt;</code>:</p>
+      <template id="page-template" is="dom-bind">
+        <bt-cal-localData id="localData" data={{data}} ></bt-cal-localData>
+        <neon-animated-pages id="pages" selected="0">
+          <bt-cal-grid data={{data}} on-cal-click="_onCalClick" on-click="">
+            <template is="dom-repeat" items="{{data.month.weeks}}" as="d">
+              <bt-cal-date class="daysOfCal" id="{{index}}">
+                <h1>{{d.day}}</h1>
+                <h2>{{d.title}}</h2>
+                <div>{{d.desc}}</div>
+              </bt-cal-date>
+            </template>
+          </bt-cal-grid>
+          <template is="dom-repeat" items="{{data.month.weeks}}" as="d">
+            <bt-cal-detail on-detail-click="_onDetailClick">
+              <h1>{{d.month}} {{d.day}}, {{d.year}}</h1>
+            </bt-cal-detail>
+          </template>
+        </neon-animated-pages>  
+        
+      </template>
+     
 
-    
     <script>
- 
+      var template = document.querySelector('#page-template');
+      template._onDetailClick = function(event){
+        this.$.pages.selected = 0;
+      }
+      template._onCalClick = function(event){
+        this.$.pages.selected = event.detail;
+      };
+      
     </script>
 
   </body>

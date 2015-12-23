@@ -1,16 +1,39 @@
-
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
 <link rel="import" href="../polymer/polymer.html">
 
 
+<!--
+An element to be opened with bt-cal-date to show more details about a date on a calendar.
+
+Example:
+
+    <bt-cal-date>
+      <h1>1</h1>
+      <h2>Title</h2>
+      <div>Description</div>
+    </bt-cal-date>
+    ...
+    <bt-cal-detail>
+      ...content...
+    </bt-cal-detail>
+@demo
+-->
 <dom-module id="bt-cal-localData">
 
-  <style>
-  </style>
 
-
+  <template>
+  </template>
 
 </dom-module>
-
+<script type="text/javascript" src="calGen.js"></script>
 <script>
 
   Polymer({
@@ -18,23 +41,31 @@
     is: 'bt-cal-localData',
 
     properties: {
-
+      data:{
+        type: Object,
+        notify: true,
+      },
+      month:{
+        type: Object,
+        notify: true,
+      }
     },
-
-    // Element Lifecycle
-
-    ready: function() {
-
+    ready: function(){
+      this.month = calGen();
+      this.data = this.month.getCalData();
+      document.addEventListener('next-month', this.nextMonth.bind(this));
+      document.addEventListener('prev-month', this.prevMonth.bind(this));
+      document.addEventListener('set-date', this.setDate.bind(this));
     },
-
-    attached: function() {
-
+    nextMonth: function(){
+      this.data = this.month.nextMonth();
     },
-
-    detached: function() {
-
+    prevMonth: function(){
+      this.data = this.month.prevMonth();
     },
-
+    setDate: function(date){
+      this.data = this.month.setDate(date);
+    },
   });
 
 </script>

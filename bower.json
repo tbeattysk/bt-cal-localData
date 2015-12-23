@@ -1,5 +1,5 @@
 {
-  "name": "bt-cal-detail",
+  "name": "bt-cal-localData",
   "version": "0.0.1",
   "authors": [
     "Tyler Beatty <tbeatty.sk@gmail.com>"
@@ -31,6 +31,8 @@
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "web-component-tester": "*",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.0",
     "bt-cal-date": "bt-cal-date#^0.0",
     "bt-cal-grid": "bt-cal-grid#^0.0",
     "bt-cal-detail": "bt-cal-detail#^0.0"
