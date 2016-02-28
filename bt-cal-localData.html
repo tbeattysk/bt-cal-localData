@@ -48,20 +48,48 @@ Example:
       month:{
         type: Object,
         notify: true,
+      },
+      local:{
+        type:Object,
+        notify:true,
+        value:{
+          "2016-01-19T16:00:00.000Z":[{
+          title: "Meeting with Janice",
+          detail: "Another meeting."},
+          {
+          title: "Meeting with Greg",
+          details: "Another meeting."}],
+          "2016-01-05T16:00:00.000Z":[{
+          title: "Meeting with Eddie",
+          detail: "Another meeting."}]
+        }
       }
+
     },
     ready: function(){
-      this.month = calGen();
+      this.month = calGen(new Date(), this.local);
       this.data = this.month.getCalData();
+      document.addEventListener('cal-click', this.selectDate.bind(this));
       document.addEventListener('next-month', this.nextMonth.bind(this));
       document.addEventListener('prev-month', this.prevMonth.bind(this));
+      document.addEventListener('next-year', this.nextYear.bind(this));
+      document.addEventListener('prev-year', this.prevYear.bind(this));
       document.addEventListener('set-date', this.setDate.bind(this));
+    },
+    selectDate: function(index){
+      this.data = this.month.selectDate(index);
     },
     nextMonth: function(){
       this.data = this.month.nextMonth();
     },
     prevMonth: function(){
       this.data = this.month.prevMonth();
+    },
+    nextYear: function(){
+      this.data = this.month.nextYear();
+    },
+    prevYear: function(){
+      this.data = this.month.prevYear();
     },
     setDate: function(date){
       this.data = this.month.setDate(date);

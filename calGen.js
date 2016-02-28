@@ -1,4 +1,4 @@
-var calGen = function (date, initSettings){
+var calGen = function (date, data){
 	var settings = {
 		hideWeekends: true,
 		mondayFirst: true,
@@ -6,6 +6,7 @@ var calGen = function (date, initSettings){
 	var date =  new Date();
 	var daysInWeek = 7;
 	var month = _buildMonth(date);
+	var selected = {};
 	var calData = [];
 	function _buildMonth(date){
 		if(settings.hideWeekends){
@@ -15,7 +16,7 @@ var calGen = function (date, initSettings){
 			date: date,
 			year: date.getFullYear(),
 			month: _calMonth(date),
-			weeks:_recurseWeeks(_getFirstSunday(date), _lastDayInMonth(date)),
+			days:_recurseWeeks(_getFirstSunday(date), _lastDayInMonth(date)),
 			//Get the array of dates.
 		}
 		return monthData;
@@ -23,7 +24,8 @@ var calGen = function (date, initSettings){
 	function _recurseWeeks(thisSun, monthEnd, monthArr){
 		var monthArr = monthArr || new Array;
 		for(var i=0; i<6; i++){
-			monthArr = monthArr.concat(_getWeekArray(thisSun,monthEnd));
+			var nextWeek = _getWeekArray(thisSun,monthEnd);
+				monthArr = monthArr.concat(nextWeek);
 			//this._recurseWeeks(new Date(thisSun.getTime()+604800000), monthEnd, monthArr);
 			thisSun = new Date(thisSun.getTime()+604800000)
 		}
@@ -35,21 +37,35 @@ var calGen = function (date, initSettings){
 	};
 	function _getWeekArray(dayOfWeek, monthEnd){
 		var weekArr = new Array;
+		var displayWeek = false;
 		if(settings.mondayFirst || settings.hideWeekends){
 			dayOfWeek = new Date(dayOfWeek.getTime()+86400000);
 		}
 		for (var i=0; i<daysInWeek; i++){
-		 	weekArr.push({date:dayOfWeek.toJSON(), 
+		 	var monthOfDay = dayOfWeek.getMonth();
+		 	var monthShown = monthEnd.getMonth();
+		 	var jsonDate = dayOfWeek.toJSON();
+		 	var events=[];
+		 	//TO DO: Concat strings below to date
+		 	if(data[jsonDate]){
+					events = data[jsonDate];
+				}
+		 	weekArr.push({
+		 		date:jsonDate, 
 		 		year:dayOfWeek.getFullYear(), 
 		 		month:_calMonth(dayOfWeek), 
 		 		day:dayOfWeek.getDate(), 
-		 		time:dayOfWeek.getTime()});
-		 	/*if(this.calData[weekArr[i].date]){
-					weekArr[i].data = calData[weekArr[i].date];
-				}*/
+		 		time:dayOfWeek.getTime(),
+		 		events: events,
+		 		offMonth: monthOfDay != monthShown,
+		 		today: new Date(date.getFullYear(), date.getMonth(), date.getDate()).toJSON() === dayOfWeek.toJSON()
+		 	});
+		 	
 			dayOfWeek = new Date(dayOfWeek.getTime()+86400000);
+			if(monthOfDay == monthShown) displayWeek = true;
 		}
-		return weekArr;
+		if(displayWeek){return weekArr;}
+		else return []
 	};
 	//helper function to find the day of the week to start the month
 	function _getFirstSunday(date){
@@ -93,6 +109,7 @@ var calGen = function (date, initSettings){
 			return {
 				month: month,
 				settings: settings,
+				selected: selected
 			}
 		},
 		nextMonth: function(){
@@ -115,6 +132,18 @@ var calGen = function (date, initSettings){
 			month = _buildMonth(month.date);
 			return this.getCalData();
 		},
+		nextYear: function(){
+			month.date = new Date(month.date.getFullYear()+1, month.date.getMonth(), 1);
+			console.log("Setting year to " + month.date.getFullYear());
+			month = _buildMonth(month.date);
+			return this.getCalData();			
+		},
+		prevYear: function(){
+			month.date = new Date(month.date.getFullYear()-1, month.date.getMonth(), 1);
+			console.log("Setting year to " + month.date.getFullYear());
+			month = _buildMonth(month.date);
+			return this.getCalData();
+		},
 		setDate: function(newDate){
 			month = _buildMonth(newDate);
 			console.log("Going to date"+newDate);
@@ -122,6 +151,11 @@ var calGen = function (date, initSettings){
 		},
 		setSettings: function(newSettings){
 			console.log("New Settings")
+		},
+		selectDate: function(index){
+			selected = month.days[index.detail];
+			month = _buildMonth(month.date);
+			return this.getCalData();
 		},
 		createData: function(dataDate, data){
 
